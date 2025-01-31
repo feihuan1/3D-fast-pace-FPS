@@ -1,13 +1,17 @@
 using UnityEngine;
 using StarterAssets;
 using Cinemachine;
+using TMPro;
 
 public class ActiveWeapon : MonoBehaviour
 {
-    [SerializeField] WeaponSO weaponSO;
+    [SerializeField] WeaponSO startingWeapon;
     [SerializeField] GameObject ZoomVignette;
     [SerializeField] CinemachineVirtualCamera cinemachineVirtualCamera;
+    [SerializeField] Camera weaponCamera;
+    [SerializeField] TMP_Text ammoText;
 
+    WeaponSO currentWeaponSO;
     Animator animator;
     StarterAssetsInputs starterAssetsInputs;
     Weapon currentWeapon;
@@ -16,6 +20,7 @@ public class ActiveWeapon : MonoBehaviour
     float timeSinceLastShot = 0;
     float defaultFOV;
     float defaultRotationSped;
+    int currentAmmo;
 
 
     const string SHOOT_STRING = "Shoot";
@@ -31,7 +36,8 @@ public class ActiveWeapon : MonoBehaviour
 
     private void Start()
     {
-        currentWeapon = GetComponentInChildren<Weapon>();
+        SwitchWeapon(startingWeapon);
+        AdjustAmmo(currentWeaponSO.MagzineSize);
     }
 
 
@@ -40,6 +46,17 @@ public class ActiveWeapon : MonoBehaviour
 
         handleShoot();
         HandleZoom();
+
+    }
+
+    public void AdjustAmmo(int amount)
+    {
+        currentAmmo += amount;
+        if(currentAmmo > currentWeaponSO.MagzineSize) {
+            currentAmmo = currentWeaponSO.MagzineSize;
+        }
+
+        ammoText.text = currentAmmo.ToString("D2");
     }
 
     public void SwitchWeapon(WeaponSO weaponSO)
@@ -51,7 +68,8 @@ public class ActiveWeapon : MonoBehaviour
 
         Weapon newWeapon = Instantiate(weaponSO.weaponPrefab, transform).GetComponent<Weapon>();// tramsform will defaul child this into current class and use preset transform
         currentWeapon = newWeapon;
-        this.weaponSO = weaponSO;
+        this.currentWeaponSO = weaponSO;
+        AdjustAmmo(currentWeaponSO.MagzineSize);
     }
 
     private void handleShoot()
@@ -60,13 +78,14 @@ public class ActiveWeapon : MonoBehaviour
 
         if (!starterAssetsInputs.shoot) return;
 
-        if (timeSinceLastShot >= weaponSO.FireRate)
+        if (timeSinceLastShot >= currentWeaponSO.FireRate && currentAmmo > 0)
         {
-            currentWeapon.Shoot(weaponSO);
+            currentWeapon.Shoot(currentWeaponSO);
             animator.Play(SHOOT_STRING, 0, 0f);
             timeSinceLastShot = 0;
+            AdjustAmmo(-1);
         }
-        if (!weaponSO.IsAutomatic)
+        if (!currentWeaponSO.IsAutomatic)
         {
             starterAssetsInputs.ShootInput(false);
         }
@@ -74,17 +93,19 @@ public class ActiveWeapon : MonoBehaviour
 
     void HandleZoom()
     {
-        if (!weaponSO.CanZoom) return;
+        if (!currentWeaponSO.CanZoom) return;
 
         if (starterAssetsInputs.zoom)
         {
+            cinemachineVirtualCamera.m_Lens.FieldOfView = currentWeaponSO.ZoomAmount;
+            weaponCamera.fieldOfView = currentWeaponSO.ZoomAmount;
             ZoomVignette.SetActive(true);
-            cinemachineVirtualCamera.m_Lens.FieldOfView = weaponSO.ZoomAmount;
-            firstPersonController.ChangeRotationSpeed(weaponSO.ZoomRotationSpeed);
+            firstPersonController.ChangeRotationSpeed(currentWeaponSO.ZoomRotationSpeed);
         }
         else
         {
             cinemachineVirtualCamera.m_Lens.FieldOfView = defaultFOV;
+            weaponCamera.fieldOfView = defaultFOV;
             ZoomVignette.SetActive(false);
             firstPersonController.ChangeRotationSpeed(defaultRotationSped);
 

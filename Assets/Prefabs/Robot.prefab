@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 3989094797012202437}
   - component: {fileID: 5531925830572906410}
   - component: {fileID: 8821200181419806556}
+  - component: {fileID: 3382468783618711860}
   m_Layer: 6
   m_Name: Robot
   m_TagString: Untagged
@@ -64,7 +65,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0.7508031, z: 0, w: 0.6605261}
   m_LocalPosition: {x: -13.448133, y: 1, z: 0.563687}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8232877914383249778}
   m_Father: {fileID: 0}
@@ -138,6 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c562d9fcf3d6d439c29bd41d0ce5ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explodeVFXPrefab: {fileID: 7487957083944223830, guid: f1a210b1f7fba5e438993ccb0efd5c19, type: 3}
   startingHealth: 3
 --- !u!95 &8821200181419806556
 Animator:
@@ -161,6 +163,29 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!136 &3382468783618711860
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5783052091079577772}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &7567827394831093440
 PrefabInstance:
   m_ObjectHideFlags: 0
