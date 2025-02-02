@@ -16,13 +16,15 @@ public class Weapon : MonoBehaviour
     {
 
         muzzleFlash.Play();
+        cinemachineImpulseSource.GenerateImpulse();
+
         RaycastHit hit;
 
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, Mathf.Infinity, interactionLayer, QueryTriggerInteraction.Ignore))
         {
-            cinemachineImpulseSource.GenerateImpulse();
             Instantiate(weaponSO.HitVFXPrefab,hit.point,Quaternion.identity);
-            EnemyHealth enemyHealth = hit.collider.gameObject.GetComponent<EnemyHealth>();
+            // get comp in parent start check with it self , and only retur nthe first find :)
+            EnemyHealth enemyHealth = hit.collider.gameObject.GetComponentInParent<EnemyHealth>();
             enemyHealth?.TakeDamage(weaponSO.Damage);
         }
     }
